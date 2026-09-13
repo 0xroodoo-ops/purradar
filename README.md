@@ -2,6 +2,8 @@
 
 **REAL PLANES. CATS INSTEAD.**
 
+**Live: [purradar.vercel.app](https://purradar.vercel.app)**
+
 A live aircraft tracker where every aircraft is drawn as a cat. The positions,
 headings, altitudes and callsigns are real ADS-B data, updated every few
 seconds. The cats are not.
