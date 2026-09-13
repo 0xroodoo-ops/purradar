@@ -1,26 +1,121 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/**
+ * PURRADAR.
+ *
+ * Deep navy going black, hot pink and electric cyan on top. The map owns the
+ * screen, so every chrome surface is translucent and sits over it — nothing
+ * here is allowed to take a slice of the viewport away from the cats.
+ */
+
+@theme {
+  --color-void: #04060f;
+  --color-navy: #070b1c;
+  --color-navy-soft: #0d1330;
+  --color-pink: #ff4fa3;
+  --color-pink-soft: #ff7ab8;
+  --color-cyan: #22e0ff;
+  --color-purple: #b96bff;
+  --color-chalk: #dfe6ff;
+  --color-muted: #7c86a8;
+
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
+  background: var(--color-void);
+  color: var(--color-chalk);
+  overscroll-behavior: none;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  /* The map is the page; nothing should scroll behind it. */
+  overflow: hidden;
+}
+
+/* Numbers line up in the panels and the header readout. */
+.tabular {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The frosted chrome used by the header, badges and cards. */
+.glass {
+  background: color-mix(in srgb, var(--color-navy) 82%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid color-mix(in srgb, var(--color-cyan) 18%, transparent);
+}
+
+.glow-pink {
+  text-shadow: 0 0 18px color-mix(in srgb, var(--color-pink) 70%, transparent);
+}
+
+@keyframes purr-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.82); }
+}
+
+.live-dot {
+  animation: purr-pulse 1.8s ease-in-out infinite;
+}
+
+/* MapLibre's own chrome, brought into the palette.
+   Every selector here is prefixed with .maplibregl-map to outrank the
+   library's own rules: maplibre-gl.css is imported from the map component and
+   so loads after this file, and on equal specificity the later sheet wins. */
+.maplibregl-map .maplibregl-ctrl-attrib,
+.maplibregl-map .maplibregl-ctrl-attrib.maplibregl-compact {
+  background: color-mix(in srgb, var(--color-void) 78%, transparent);
+  color: var(--color-muted);
+  font-size: 10px;
+  border-radius: 6px;
+}
+.maplibregl-map .maplibregl-ctrl-attrib a {
+  color: var(--color-muted);
+}
+.maplibregl-map .maplibregl-ctrl-group {
+  background: color-mix(in srgb, var(--color-navy) 88%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-cyan) 18%, transparent);
+  box-shadow: none;
+}
+.maplibregl-map .maplibregl-ctrl-group button + button {
+  border-top-color: color-mix(in srgb, var(--color-cyan) 14%, transparent);
+}
+.maplibregl-map .maplibregl-ctrl-group button .maplibregl-ctrl-icon {
+  filter: invert(1) hue-rotate(180deg) brightness(1.4);
+}
+
+@media (max-width: 640px) {
+  .maplibregl-map .maplibregl-ctrl-attrib,
+  .maplibregl-map .maplibregl-ctrl-attrib.maplibregl-compact {
+    font-size: 9px;
+    max-width: 70vw;
+  }
+
+  /* The controls sit at the bottom on a phone. Both the basemap and the feed
+     require their attribution to stay visible, so the map's own corner moves
+     above the panel — whose real height the page publishes as --controls-h. */
+  .maplibregl-map .maplibregl-ctrl-bottom-right,
+  .maplibregl-map .maplibregl-ctrl-bottom-left {
+    bottom: calc(var(--controls-h, 150px) + 24px);
+  }
+}
+
+/* Horizontal chip rows on a phone: scrollable, but not with a scrollbar
+   sitting across the controls. */
+.no-bar {
+  scrollbar-width: none;
+}
+.no-bar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .live-dot {
+    animation: none;
+  }
 }
